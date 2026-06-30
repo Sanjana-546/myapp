@@ -1,0 +1,48 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block title %}All Posts{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <p class="page-header__eyebrow">Archive</p>
+    <h1 class="page-header__title">All posts</h1>
+    <p class="page-header__subtitle">
+        {% if posts %}
+        {{ posts|length }} article{{ posts|length|pluralize }} from our contributors.
+        {% else %}
+        No published articles yet.
+        {% endif %}
+    </p>
+</header>
+
+<div class="section-actions">
+    <a href="{% url 'blog:create_post' %}" class="btn btn--primary">Add new post</a>
+    <a href="{% url 'blog:category_list' %}" class="btn btn--ghost">Browse categories</a>
+    <a href="{% url 'blog:author_list' %}" class="btn btn--ghost">Browse authors</a>
+</div>
+
+{% if category_groups %}
+    {% for group in category_groups %}
+    <section class="category-section">
+        <div class="category-section__header">
+            <h2 class="category-section__title">{{ group.label }}</h2>
+            <p class="category-section__meta">{{ group.count }} post{{ group.count|pluralize }}</p>
+            <a href="{% url 'blog:category_detail' category_slug=group.slug %}" class="category-section__link">View {{ group.label }}</a>
+        </div>
+        <div class="post-grid">
+            {% for post in group.posts %}
+            {% include "blog/components/post_card.html" with post=post %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+{% else %}
+<div class="empty-state">
+    <div class="empty-state__icon" aria-hidden="true">📭</div>
+    <h3 class="empty-state__title">Nothing to read yet</h3>
+    <p class="empty-state__text">Check back soon — new posts will appear here once published.</p>
+    <a href="{% url 'blog:index' %}" class="btn btn--ghost">Back to home</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block header-title %}Post reach dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    {% if analytics %}
+    <section class="analytics-grid">
+        <article class="analytics-card">
+            <p class="analytics-card__label">Total views</p>
+            <p class="analytics-card__value">{{ analytics.total_views }}</p>
+        </article>
+        <article class="analytics-card">
+            <p class="analytics-card__label">Published posts</p>
+            <p class="analytics-card__value">{{ analytics.published_posts }}</p>
+        </article>
+        <article class="analytics-card">
+            <p class="analytics-card__label">Draft posts</p>
+            <p class="analytics-card__value">{{ analytics.draft_posts }}</p>
+        </article>
+        <article class="analytics-card">
+            <p class="analytics-card__label">Contributors</p>
+            <p class="analytics-card__value">{{ analytics.total_authors }}</p>
+        </article>
+    </section>
+
+    <div class="admin-dashboard__split">
+        <section class="dashboard-panel">
+            <div class="dashboard-panel__header">
+                <h2 class="dashboard-panel__title">Top performing posts</h2>
+                <a href="{% url 'admin:blog_post_changelist' %}" class="dashboard-panel__link">Manage all →</a>
+            </div>
+            {% if analytics.top_posts %}
+            <div class="reach-table">
+                {% for post in analytics.top_posts %}
+                <div class="reach-row">
+                    <div class="reach-row__main">
+                        <img src="{% static post.image_url %}" alt="" class="reach-row__thumb">
+                        <div>
+                            <a href="{% url 'admin:blog_post_change' post.pk %}" class="reach-row__title">{{ post.title }}</a>
+                            <p class="reach-row__meta">by {{ post.author.username }} · {{ post.get_category_display }}</p>
+                        </div>
+                    </div>
+                    <div class="reach-row__stats">
+                        <span class="reach-stat">{{ post.view_count }} views</span>
+                        <span class="reach-badge{% if post.published %} reach-badge--live{% endif %}">
+                            {% if post.published %}Live{% else %}Draft{% endif %}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="dashboard-panel__empty">No posts yet.</p>
+            {% endif %}
+        </section>
+
+        <section class="dashboard-panel">
+            <div class="dashboard-panel__header">
+                <h2 class="dashboard-panel__title">Reach by author</h2>
+            </div>
+            {% if analytics.posts_by_author %}
+            <div class="reach-table">
+                {% for row in analytics.posts_by_author %}
+                <div class="reach-row reach-row--compact">
+                    <div class="reach-row__main">
+                        <span class="author-chip__avatar">{{ row.author__username|slice:":1"|upper }}</span>
+                        <div>
+                            <p class="reach-row__title">{{ row.author__username }}</p>
+                            <p class="reach-row__meta">{{ row.post_count }} post{{ row.post_count|pluralize }}</p>
+                        </div>
+                    </div>
+                    <span class="reach-stat">{{ row.views }} views</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </section>
+    </div>
+    {% endif %}
+
+    {% if app_list %}
+    <section class="dashboard-panel dashboard-panel--apps">
+        <div class="dashboard-panel__header">
+            <h2 class="dashboard-panel__title">Quick management</h2>
+        </div>
+        <div class="admin-dashboard__grid">
+            {% for app in app_list %}
+            <section class="admin-app-module">
+                <div class="admin-app-module__header">
+                    <h3 class="admin-app-module__title">{{ app.name }}</h3>
+                </div>
+                <ul class="admin-app-module__list">
+                    {% for model in app.models %}
+                    <li class="admin-app-module__item">
+                        <a href="{{ model.admin_url }}" class="admin-app-module__link">
+                            <span class="admin-app-module__name">{{ model.name }}</span>
+                            <span class="admin-app-module__action">→</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

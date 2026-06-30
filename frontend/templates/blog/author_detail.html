@@ -1,0 +1,26 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{{ author.get_full_name|default:author.username }}{% endblock %}
+
+{% block content %}
+<section class="author-header">
+    <a href="{% url 'blog:author_list' %}" class="article__back">← All contributors</a>
+    <h1 class="article__title">{{ author.get_full_name|default:author.username }}</h1>
+    <p class="article__subtitle">{{ author.username }} has published {{ posts|length }} article{{ posts|length|pluralize }}.</p>
+</section>
+
+{% if posts %}
+<div class="post-grid">
+    {% for post in posts %}
+    {% include "blog/components/post_card.html" with post=post %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-state__icon" aria-hidden="true">✍️</div>
+    <h3 class="empty-state__title">No published posts yet</h3>
+    <p class="empty-state__text">This author has not published any articles.</p>
+    <a href="{% url 'blog:create_post' %}" class="btn btn--primary">Create a post</a>
+</div>
+{% endif %}
+{% endblock %}

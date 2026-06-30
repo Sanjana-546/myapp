@@ -1,0 +1,155 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block title %}Admin dashboard{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="page-header__eyebrow">Admin dashboard</p>
+    <h1 class="page-header__title">Site overview</h1>
+    <p class="page-header__subtitle">Monitor content performance and manage authors on Inkspire.</p>
+    <div class="page-header__actions">
+        <a href="{% url 'blog:user_logout' %}" class="btn btn--ghost">Logout</a>
+    </div>
+</section>
+
+<section class="analytics-grid">
+    <article class="analytics-card">
+        <p class="analytics-card__label">Total posts</p>
+        <p class="analytics-card__value">{{ overall_stats.total_posts }}</p>
+    </article>
+    <article class="analytics-card">
+        <p class="analytics-card__label">Published</p>
+        <p class="analytics-card__value">{{ overall_stats.published_posts }}</p>
+    </article>
+    <article class="analytics-card">
+        <p class="analytics-card__label">Drafts</p>
+        <p class="analytics-card__value">{{ overall_stats.draft_posts }}</p>
+    </article>
+    <article class="analytics-card">
+        <p class="analytics-card__label">Total views</p>
+        <p class="analytics-card__value">{{ overall_stats.total_views }}</p>
+    </article>
+    <article class="analytics-card">
+        <p class="analytics-card__label">Total likes</p>
+        <p class="analytics-card__value">{{ overall_stats.total_likes }}</p>
+    </article>
+    <article class="analytics-card">
+        <p class="analytics-card__label">Total comments</p>
+        <p class="analytics-card__value">{{ overall_stats.total_comments }}</p>
+    </article>
+    <article class="analytics-card">
+        <p class="analytics-card__label">Authors</p>
+        <p class="analytics-card__value">{{ overall_stats.total_authors }}</p>
+    </article>
+</section>
+
+<section class="section">
+    <div class="section__header">
+        <h2 class="section__title">Author performance</h2>
+    </div>
+
+    {% if authors %}
+    <div class="reach-table reach-table--admin">
+        {% for author in authors %}
+        <div class="reach-row">
+            <div class="reach-row__main">
+                <div>
+                    <p class="reach-row__title">{{ author.get_full_name|default:author.username }}</p>
+                    <p class="reach-row__meta">@{{ author.username }}</p>
+                </div>
+            </div>
+            <div class="reach-row__stats">
+                <span class="reach-stat">{{ author.post_count }} posts</span>
+                <span class="reach-stat">{{ author.published_count }} published</span>
+                <span class="reach-stat">{{ author.total_views }} views</span>
+                <span class="reach-stat">{{ author.total_likes }} likes</span>
+                <span class="reach-stat">{{ author.total_comments }} comments</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true">👥</div>
+        <h3 class="empty-state__title">No authors yet</h3>
+        <p class="empty-state__text">Authors will appear here once they start publishing content.</p>
+    </div>
+    {% endif %}
+</section>
+
+<section class="section">
+    <div class="section__header">
+        <h2 class="section__title">Post performance</h2>
+    </div>
+
+    {% if posts %}
+    <div class="reach-table reach-table--admin">
+        {% for post in posts %}
+        <div class="reach-row">
+            <div class="reach-row__main">
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="" class="reach-row__thumb">
+                {% else %}
+                <img src="{% static 'blog/images/default.svg' %}" alt="" class="reach-row__thumb">
+                {% endif %}
+                <div>
+                    <a href="{% url 'blog:detail' post.pk %}" class="reach-row__title">{{ post.title }}</a>
+                    <p class="reach-row__meta">by {{ post.author.get_full_name|default:post.author.username }} · {{ post.category|title }} · {{ post.created_at|date:"M d, Y" }}</p>
+                </div>
+            </div>
+            <div class="reach-row__stats">
+                <span class="reach-stat">{{ post.view_count }} views</span>
+                <span class="reach-stat">{{ post.like_count }} likes</span>
+                <span class="reach-stat">{{ post.comment_count }} comments</span>
+                <span class="reach-badge{% if post.published %} reach-badge--live{% endif %}">
+                    {% if post.published %}Live{% else %}Draft{% endif %}
+                </span>
+                <div class="reach-row__actions">
+                    <form method="post" action="{% url 'blog:delete_post' post.pk %}" class="inline-form" onsubmit="return confirm('Delete this post?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn--ghost btn--sm btn--danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true">📝</div>
+        <h3 class="empty-state__title">No posts yet</h3>
+        <p class="empty-state__text">Posts will appear here once authors start publishing content.</p>
+    </div>
+    {% endif %}
+</section>
+
+{% if recent_comments %}
+<section class="section">
+    <div class="section__header">
+        <h2 class="section__title">Recent comments across all posts</h2>
+    </div>
+    <div class="comments-list">
+        {% for comment in recent_comments %}
+        <div class="comment">
+            <div class="comment__header">
+                <a href="{% url 'blog:profile' username=comment.user.username %}" class="comment__author">
+                    {% if comment.user.profile.profile_image %}
+                    <img src="{{ comment.user.profile.profile_image.url }}" alt="{{ comment.user.username }}" class="comment__avatar">
+                    {% else %}
+                    <div class="comment__avatar comment__avatar--placeholder">
+                        <span>{{ comment.user.username|slice:":1"|upper }}</span>
+                    </div>
+                    {% endif %}
+                    <span class="comment__author-name">{{ comment.user.get_full_name|default:comment.user.username }}</span>
+                </a>
+                <time class="comment__date" datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|timesince }} ago</time>
+            </div>
+            <p class="comment__content">{{ comment.content }}</p>
+            <p class="comment__post-link">on <a href="{% url 'blog:detail' comment.post.pk %}">{{ comment.post.title }}</a> by {{ comment.post.author.username }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

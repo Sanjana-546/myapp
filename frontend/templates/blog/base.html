@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}A modern Django blog with articles on web development.{% endblock %}">
+    <title>{% block title %}Inkspire{% endblock %} | Inkspire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'blog/css/main.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    {% if messages %}
+    <div class="flash-messages">
+        {% for message in messages %}
+        <div class="flash-message flash-message--{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="{% url 'blog:index' %}" class="site-logo">
+                <span class="site-logo__mark" aria-hidden="true">◆</span>
+                <span class="site-logo__text">Inkspire</span>
+            </a>
+
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+                <span class="nav-toggle__bar"></span>
+                <span class="nav-toggle__bar"></span>
+                <span class="nav-toggle__bar"></span>
+            </button>
+
+            <nav id="site-nav" class="site-nav" aria-label="Main navigation">
+                <a href="{% url 'blog:index' %}" class="site-nav__link{% if request.resolver_match.url_name == 'index' %} is-active{% endif %}">Home</a>
+                <a href="{% url 'blog:post_list' %}" class="site-nav__link{% if request.resolver_match.url_name == 'post_list' or request.resolver_match.url_name == 'detail' or request.resolver_match.url_name == 'category_detail' %} is-active{% endif %}">All Posts</a>
+                <a href="{% url 'blog:category_list' %}" class="site-nav__link{% if request.resolver_match.url_name == 'category_list' %} is-active{% endif %}">Categories</a>
+                <a href="{% url 'blog:author_list' %}" class="site-nav__link{% if request.resolver_match.url_name == 'author_list' or request.resolver_match.url_name == 'author_detail' %} is-active{% endif %}">Authors</a>
+
+                {% if user.is_staff %}
+                <a href="{% url 'admin:index' %}" class="site-nav__link site-nav__link--admin{% if request.path|slice:':7' == '/admin/' %} is-active{% endif %}">Admin</a>
+                {% elif user.is_authenticated %}
+                <a href="{% url 'blog:user_dashboard' %}" class="site-nav__link{% if request.resolver_match.url_name == 'user_dashboard' %} is-active{% endif %}">Dashboard</a>
+                <a href="{% url 'blog:create_post' %}" class="site-nav__link{% if request.resolver_match.url_name == 'create_post' or request.resolver_match.url_name == 'edit_post' %} is-active{% endif %}">Write</a>
+                <a href="{% url 'blog:profile' username=user.username %}" class="site-nav__user-profile{% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'edit_profile' %} is-active{% endif %}">
+                    {% if user.profile.profile_image %}
+                    <img src="{{ user.profile.profile_image.url }}" alt="{{ user.username }}" class="site-nav__user-avatar">
+                    {% else %}
+                    <div class="site-nav__user-avatar site-nav__user-avatar--placeholder">
+                        <span>{{ user.username|slice:":1"|upper }}</span>
+                    </div>
+                    {% endif %}
+                    <span class="site-nav__user-name">{{ user.get_full_name|default:user.username }}</span>
+                </a>
+                <a href="{% url 'blog:user_logout' %}" class="site-nav__link">Logout</a>
+                {% else %}
+                <a href="{% url 'blog:user_login' %}" class="site-nav__link site-nav__link--admin">Author Login</a>
+                <a href="{% url 'admin:login' %}" class="site-nav__link">Admin</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="site-main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <p class="site-footer__copy">&copy; {% now "Y" %} Inkspire. Built with Django.</p>
+            <a href="{% url 'blog:post_list' %}" class="site-footer__link">Browse articles</a>
+        </div>
+    </footer>
+
+    <script src="{% static 'blog/js/main.js' %}" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

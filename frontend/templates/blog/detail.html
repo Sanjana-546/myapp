@@ -1,0 +1,169 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block title %}{{ post.title }}{% endblock %}
+{% block meta_description %}{{ post.content|truncatewords:30 }}{% endblock %}
+
+{% block content %}
+<article class="article">
+    <header class="article__header">
+        <a href="{% url 'blog:post_list' %}" class="article__back">← All posts</a>
+        <h1 class="article__title">{{ post.title }}</h1>
+        <div class="article__header-image">
+            <div class="article__hero-frame">
+                <img src="{% static hero_image %}" alt="{{ post.title }}" class="article__hero-image">
+                <div class="article__hero-overlay article__hero-text-overlay">
+                    <span class="article__hero-category">{{ post.category|title }}</span>
+                    <h2 class="article__hero-headline">{{ post.title }}</h2>
+                    <p class="article__hero-copy">{{ post.content|truncatewords:24 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="article__meta">
+            <div class="article__meta-row">
+                <div class="author-chip author-chip--lg">
+                    <span class="author-chip__avatar" aria-hidden="true">{{ post.author.username|slice:":1"|upper }}</span>
+                    <div>
+                        <a href="{% url 'blog:profile' username=post.author.username %}" class="author-chip__name">{{ post.author.get_full_name|default:post.author.username }}</a>
+                        <time class="article__date" datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"F d, Y" }}</time>
+                    </div>
+                </div>
+                <div class="article__meta-badges">
+                    <div class="post-category-badge">{{ post.category|title }}</div>
+                    <div class="view-count-badge">{{ post.view_count }} view{{ post.view_count|pluralize }}</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="article__content prose">
+        {{ post.content|linebreaks }}
+    </div>
+
+    <!-- Likes Section -->
+    <div class="article__likes">
+        {% if user.is_authenticated %}
+        <button class="like-button{% if is_liked %} is-liked{% endif %}" 
+                data-post-id="{{ post.id }}" 
+                data-liked="{{ is_liked|lower }}"
+                onclick="toggleLike({{ post.id }})">
+            <svg class="like-button__icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span class="like-button__count">{{ like_count }}</span>
+            <span class="like-button__text">{{ like_count }} like{{ like_count|pluralize }}</span>
+        </button>
+        {% else %}
+        <div class="like-button like-button--disabled">
+            <svg class="like-button__icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span class="like-button__count">{{ like_count }}</span>
+            <span class="like-button__text">{{ like_count }} like{{ like_count|pluralize }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Comments Section -->
+    <div class="article__comments">
+        <h3 class="article__comments-title">Comments ({{ comments.count }})</h3>
+        
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'blog:add_comment' post.id %}" class="comment-form">
+            {% csrf_token %}
+            {{ comment_form.content }}
+            {{ comment_form.content.errors }}
+            <button type="submit" class="btn btn--primary">Post Comment</button>
+        </form>
+        {% else %}
+        <p class="comment-form__login-prompt">
+            <a href="{% url 'blog:user_login' %}">Log in</a> to leave a comment.
+        </p>
+        {% endif %}
+        
+        <div class="comments-list">
+            {% for comment in comments %}
+            <div class="comment">
+                <div class="comment__header">
+                    <a href="{% url 'blog:profile' username=comment.user.username %}" class="comment__author">
+                        {% if comment.user.profile.profile_image %}
+                        <img src="{{ comment.user.profile.profile_image.url }}" alt="{{ comment.user.username }}" class="comment__avatar">
+                        {% else %}
+                        <div class="comment__avatar comment__avatar--placeholder">
+                            <span>{{ comment.user.username|slice:":1"|upper }}</span>
+                        </div>
+                        {% endif %}
+                        <span class="comment__author-name">{{ comment.user.get_full_name|default:comment.user.username }}</span>
+                    </a>
+                    <time class="comment__date" datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|timesince }} ago</time>
+                </div>
+                <p class="comment__content">{{ comment.content }}</p>
+            </div>
+            {% empty %}
+            <p class="comments-list__empty">No comments yet. Be the first to comment!</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if can_manage_post %}
+    <footer class="article__footer">
+        <div class="article__footer-actions">
+            <a href="{% url 'blog:edit_post' post.pk %}" class="btn btn--primary">Edit post</a>
+            <form method="post" action="{% url 'blog:delete_post' post.pk %}" class="inline-form" onsubmit="return confirm('Delete this post permanently?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn--ghost btn--danger">Delete post</button>
+            </form>
+            {% if user.is_staff %}
+            <a href="{% url 'admin:blog_post_change' post.pk %}" class="btn btn--ghost">Open in admin</a>
+            {% else %}
+            <a href="{% url 'blog:user_dashboard' %}" class="btn btn--ghost">← Dashboard</a>
+            {% endif %}
+        </div>
+    </footer>
+    {% else %}
+    <footer class="article__footer">
+        <div class="article__footer-actions">
+            <a href="{% url 'blog:post_list' %}" class="btn btn--ghost">← Back to all posts</a>
+            <a href="{% url 'blog:profile' username=post.author.username %}" class="btn btn--ghost">More from {{ post.author.username }}</a>
+        </div>
+    </footer>
+    {% endif %}
+</article>
+
+<script>
+async function toggleLike(postId) {
+    const button = document.querySelector(`[data-post-id="${postId}"]`);
+    const likeCountSpan = button.querySelector('.like-button__count');
+    const likeTextSpan = button.querySelector('.like-button__text');
+    
+    try {
+        const response = await fetch(`/blog/post/${postId}/like/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const data = await response.json();
+        
+        if (data.liked) {
+            button.classList.add('is-liked');
+        } else {
+            button.classList.remove('is-liked');
+        }
+        
+        likeCountSpan.textContent = data.like_count;
+        likeTextSpan.textContent = `${data.like_count} like${data.like_count !== 1 ? 's' : ''}`;
+    } catch (error) {
+        console.error('Error toggling like:', error);
+    }
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+</script>
+{% endblock %}

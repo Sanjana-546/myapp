@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Inkspire</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'blog/css/main.css' %}">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .admin-login {
+            width: 100%;
+            max-width: 400px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .admin-login__header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .admin-login__logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .admin-login__logo-mark {
+            font-size: 1.5rem;
+            color: var(--color-accent);
+        }
+
+        .admin-login__logo-text {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .admin-login__title {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .admin-login__subtitle {
+            margin: 0.5rem 0 0;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        .admin-login__form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .admin-login__field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-login__label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--color-text);
+            font-size: 0.9rem;
+        }
+
+        .admin-login__input {
+            padding: 0.75rem 0.9rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--color-text);
+            background: var(--color-surface);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        .admin-login__input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(196, 93, 44, 0.1);
+        }
+
+        .admin-login__button {
+            padding: 0.75rem 1.5rem;
+            background: var(--color-accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background var(--transition), transform var(--transition);
+        }
+
+        .admin-login__button:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .admin-login__errors {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .admin-login__error-title {
+            margin: 0 0 0.5rem;
+            font-weight: 600;
+            color: #7f1d1d;
+        }
+
+        .admin-login__error-list {
+            margin: 0;
+            padding-left: 1.25rem;
+            color: #991b1b;
+            font-size: 0.9rem;
+        }
+
+        .admin-login__error-list li {
+            margin-bottom: 0.25rem;
+        }
+
+        .admin-login__footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        .admin-login__footer a {
+            color: var(--color-accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .admin-login__footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .admin-login {
+                padding: 1.5rem 1rem;
+            }
+
+            .admin-login__title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login">
+        <div class="admin-login__header">
+            <div class="admin-login__logo">
+                <span class="admin-login__logo-mark">◆</span>
+                <span class="admin-login__logo-text">Inkspire</span>
+            </div>
+            <h1 class="admin-login__title">Admin</h1>
+            <p class="admin-login__subtitle">Sign in to manage Inkspire</p>
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="admin-login__errors">
+            <div class="admin-login__error-title">Login failed</div>
+            <ul class="admin-login__error-list">
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="post" class="admin-login__form">
+            {% csrf_token %}
+
+            <div class="admin-login__field">
+                <label for="{{ form.username.id_for_label }}" class="admin-login__label">{{ form.username.label }}</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="admin-login__errors">
+                    <ul class="admin-login__error-list">
+                        {% for error in form.username.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="admin-login__field">
+                <label for="{{ form.password.id_for_label }}" class="admin-login__label">{{ form.password.label }}</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                <div class="admin-login__errors">
+                    <ul class="admin-login__error-list">
+                        {% for error in form.password.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="admin-login__button">Sign in</button>
+        </form>
+
+        <div class="admin-login__footer">
+            <p>Author account? <a href="{% url 'blog:user_login' %}">Use the author portal</a></p>
+            <a href="/blog/">← Back to Inkspire</a>
+        </div>
+    </div>
+</body>
+</html>

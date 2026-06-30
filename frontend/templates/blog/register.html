@@ -1,0 +1,71 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Create author account{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="auth-card">
+        <div class="auth-card__header">
+            <p class="auth-card__eyebrow">Author portal</p>
+            <h1 class="auth-card__title">Join Inkspire</h1>
+            <p class="auth-card__subtitle">Create your account and start publishing your stories.</p>
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            <div class="form-row">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="form-errors">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-row">
+                <label for="{{ form.first_name.id_for_label }}">First name</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                <div class="form-errors">{{ form.first_name.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-row">
+                <label for="{{ form.last_name.id_for_label }}">Last name</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                <div class="form-errors">{{ form.last_name.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-row">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="form-errors">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-row">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                <div class="form-errors">{{ form.password.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-row">
+                <label for="{{ form.confirm_password.id_for_label }}">Confirm password</label>
+                {{ form.confirm_password }}
+                {% if form.confirm_password.errors %}
+                <div class="form-errors">{{ form.confirm_password.errors }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn--primary btn--block">Create account</button>
+        </form>
+
+        <div class="auth-card__footer">
+            <p>Already have an account? <a href="{% url 'blog:user_login' %}">Sign in</a></p>
+            <p><a href="{% url 'blog:index' %}">← Back to Inkspire</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

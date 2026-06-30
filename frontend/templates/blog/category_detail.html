@@ -1,0 +1,27 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block title %}{{ category_label }}{% endblock %}
+
+{% block content %}
+<section class="category-header">
+    <a href="{% url 'blog:category_list' %}" class="article__back">← All categories</a>
+    <h1 class="article__title">{{ category_label }}</h1>
+    <p class="article__subtitle">All published posts in the {{ category_label }} category.</p>
+</section>
+
+{% if posts %}
+<div class="post-grid">
+    {% for post in posts %}
+    {% include "blog/components/post_card.html" with post=post %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-state__icon" aria-hidden="true">📝</div>
+    <h3 class="empty-state__title">No posts in this category</h3>
+    <p class="empty-state__text">Try another category or add a new post.</p>
+    <a href="{% url 'blog:create_post' %}" class="btn btn--primary">Create a post</a>
+</div>
+{% endif %}
+{% endblock %}

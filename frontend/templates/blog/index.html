@@ -1,0 +1,51 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="hero__eyebrow">Welcome</p>
+    <h1 class="hero__title">A common blog platform of our likes and dislikes</h1>
+    <p class="hero__subtitle">
+        Share ideas, stories, and opinions from our community in one place.
+    </p>
+    <div class="hero__actions">
+        <a href="{% url 'blog:post_list' %}" class="btn btn--primary">Browse all posts</a>
+        <a href="/admin/" class="btn btn--ghost">Write a post</a>
+    </div>
+    {% if post_count %}
+    <dl class="hero__stats">
+        <div class="stat">
+            <dt class="stat__value">{{ post_count }}</dt>
+            <dd class="stat__label">Published posts</dd>
+        </div>
+        <div class="stat">
+            <dt class="stat__value">{{ author_count }}</dt>
+            <dd class="stat__label">Contributors</dd>
+        </div>
+    </dl>
+    {% endif %}
+</section>
+
+<section class="section">
+    <div class="section__header">
+        <h2 class="section__title">Recent posts</h2>
+        <a href="{% url 'blog:post_list' %}" class="section__link">View all →</a>
+    </div>
+
+    {% if recent_posts %}
+    <div class="post-grid">
+        {% for post in recent_posts %}
+        {% include "blog/components/post_card.html" with post=post %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true">✎</div>
+        <h3 class="empty-state__title">No posts yet</h3>
+        <p class="empty-state__text">Log in to the admin to publish your first article.</p>
+        <a href="/admin/" class="btn btn--primary">Go to admin</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

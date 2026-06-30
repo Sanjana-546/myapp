@@ -1,0 +1,215 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{{ opts.verbose_name_plural|capfirst }}{% endblock %}
+{% block header-title %}
+    {{ opts.verbose_name_plural|capfirst }}
+    {% if cl.result_count %}
+    <span class="admin-header-badge">{{ cl.result_count }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="changelist">
+    <!-- Search and Filters -->
+    {% block search %}
+    {% if cl.has_search_form %}
+    <div class="admin-search">
+        <form id="changelist-search" method="get" class="admin-search__form">
+            <input type="text" size="40" name="{{ cl.search_form.q.name }}" value="{{ cl.query }}" id="searchbar" placeholder="Search {{ opts.verbose_name_plural }}..." class="admin-search__input">
+            <button type="submit" class="admin-search__button">Search</button>
+        </form>
+    </div>
+    {% endif %}
+    {% endblock %}
+
+    <!-- Actions -->
+    {% block actions %}
+    {% if has_add_permission %}
+    <div class="admin-actions">
+        <a href="{% url 'admin:blog_post_add' %}" class="btn btn--primary">
+            <span>+ Add Post</span>
+        </a>
+    </div>
+    {% endif %}
+    {% endblock %}
+
+    <!-- Results Table -->
+    {% block result_list %}
+    <div class="admin-results">
+        {% if cl.result_list %}
+        <table class="admin-results-table">
+            <thead>
+                <tr>
+                    {% for header in cl.result_headers %}
+                    <th scope="col" class="admin-results-table__header">
+                        {% if header.sortable %}
+                            <a href="{{ header.url_primary }}" class="admin-results-table__sort">
+                                {{ header.text }}
+                                {% if header.ascending %}<span class="sort-indicator">↑</span>{% elif header.descending %}<span class="sort-indicator">↓</span>{% endif %}
+                            </a>
+                        {% else %}
+                            {{ header.text }}
+                        {% endif %}
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in cl.result_list %}
+                <tr class="admin-results-table__row">
+                    {% for item in result.cells %}
+                    <td class="admin-results-table__cell">{{ item }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state__icon" aria-hidden="true">📭</div>
+            <h3 class="empty-state__title">No {{ opts.verbose_name_plural }} found</h3>
+            <p class="empty-state__text">Start by adding your first {{ opts.verbose_name }}.</p>
+            {% if has_add_permission %}
+            <a href="{% url 'admin:blog_post_add' %}" class="btn btn--primary">Add {{ opts.verbose_name }}</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+</div>
+
+<style>
+.changelist {
+    padding: 0;
+}
+
+.admin-search {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-search__form {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.admin-search__input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    background: var(--color-bg);
+}
+
+.admin-search__input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(196, 93, 44, 0.1);
+}
+
+.admin-search__button {
+    padding: 0.75rem 1.5rem;
+    background: var(--color-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.admin-search__button:hover {
+    background: var(--color-accent-hover);
+}
+
+.admin-actions {
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.admin-results {
+    margin-bottom: 2rem;
+}
+
+.admin-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-results-table__header {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: 0.9rem;
+    background: var(--color-bg);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.admin-results-table__sort {
+    color: var(--color-accent);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.sort-indicator {
+    opacity: 0.6;
+}
+
+.admin-results-table__row {
+    border-bottom: 1px solid var(--color-border);
+    transition: background var(--transition);
+}
+
+.admin-results-table__row:hover {
+    background: var(--color-accent-soft);
+}
+
+.admin-results-table__cell {
+    padding: 1rem;
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
+
+.admin-results-table__cell a {
+    color: var(--color-accent);
+    font-weight: 500;
+    transition: color var(--transition);
+}
+
+.admin-results-table__cell a:hover {
+    color: var(--color-accent-hover);
+}
+
+@media (max-width: 768px) {
+    .admin-search__form {
+        flex-direction: column;
+    }
+    
+    .admin-results-table {
+        font-size: 0.85rem;
+    }
+    
+    .admin-results-table__cell,
+    .admin-results-table__header {
+        padding: 0.75rem 0.5rem;
+    }
+}
+</style>
+{% endblock %}

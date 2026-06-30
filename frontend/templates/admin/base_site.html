@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin{% endblock %} | Inkspire Admin</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Admin Styles -->
+    <link rel="stylesheet" href="{% static 'admin/css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'blog/css/main.css' %}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar__header">
+                <a href="{% url 'admin:index' %}" class="admin-logo">
+                    <span class="admin-logo__mark">◆</span>
+                    <span class="admin-logo__text">Inkspire</span>
+                </a>
+                <p class="admin-logo__subtitle">Admin Panel</p>
+            </div>
+            
+            <nav class="admin-nav">
+                <a href="{% url 'admin:index' %}" class="admin-nav__link{% if is_admin_index %} is-active{% endif %}">
+                    <span class="admin-nav__icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'admin:blog_post_changelist' %}" class="admin-nav__link{% if 'blog_post_changelist' in request.resolver_match.url_name %} is-active{% endif %}">
+                    <span class="admin-nav__icon">📝</span>
+                    <span>Posts</span>
+                </a>
+                <a href="{% url 'admin:auth_user_changelist' %}" class="admin-nav__link">
+                    <span class="admin-nav__icon">👥</span>
+                    <span>Users</span>
+                </a>
+            </nav>
+            
+            <div class="admin-sidebar__footer">
+                <a href="/" class="admin-footer__link">← Back to Inkspire</a>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Top Header -->
+            <header class="admin-header">
+                <div class="admin-header__content">
+                    <h1 class="admin-header__title">{% block header-title %}Admin Panel{% endblock %}</h1>
+                </div>
+                <div class="admin-header__user">
+                    {% if user.is_active %}
+                    <span class="admin-user__info">
+                        <span class="admin-user__avatar">{{ user.username|slice:":1"|upper }}</span>
+                        <span class="admin-user__name">{{ user.get_full_name|default:user.username }}</span>
+                    </span>
+                    <a href="{% url 'admin:logout' %}" class="admin-user__logout">Logout</a>
+                    {% endif %}
+                </div>
+            </header>
+            
+            <!-- Messages -->
+            {% if messages %}
+            <div class="admin-messages">
+                {% for message in messages %}
+                <div class="admin-message admin-message--{{ message.tags }}">
+                    <span class="admin-message__icon">
+                        {% if message.tags == 'error' %}❌
+                        {% elif message.tags == 'warning' %}⚠️
+                        {% elif message.tags == 'success' %}✅
+                        {% else %}ℹ️{% endif %}
+                    </span>
+                    <div class="admin-message__content">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="admin-message__close" aria-label="Close message">×</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Content Area -->
+            <main class="admin-content">
+                {% block content %}
+                <p>Welcome to the admin panel.</p>
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+    
+    <script src="{% static 'admin/js/admin.js' %}" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

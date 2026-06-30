@@ -1,0 +1,27 @@
+{% load static %}
+<article class="post-card">
+    <a href="{% url 'blog:detail' post.pk %}" class="post-card__image-link">
+        {% if post.image %}
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-card__image">
+        {% else %}
+        <img src="{% static 'blog/images/default.svg' %}" alt="{{ post.title }}" class="post-card__image">
+        {% endif %}
+        <span class="post-card__category">{{ post.category|title }}</span>
+    </a>
+    <div class="post-card__body">
+        <h2 class="post-card__title">
+            <a href="{% url 'blog:detail' post.pk %}">{{ post.title }}</a>
+        </h2>
+        <p class="post-card__excerpt">{{ post.content|truncatewords:28 }}</p>
+    </div>
+    <footer class="post-card__footer">
+        <a href="{% url 'blog:profile' username=post.author.username %}" class="author-chip">
+            <span class="author-chip__avatar" aria-hidden="true">{{ post.author.username|slice:":1"|upper }}</span>
+            <span class="author-chip__name">{{ post.author.get_full_name|default:post.author.username }}</span>
+        </a>
+        <div class="post-card__meta">
+            <span class="post-card__views">{{ post.view_count }} view{{ post.view_count|pluralize }}</span>
+            <time class="post-card__date" datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"M d, Y" }}</time>
+        </div>
+    </footer>
+</article>

@@ -1,0 +1,30 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <p class="page-header__eyebrow">Categories</p>
+    <h1 class="page-header__title">Browse by topic</h1>
+    <p class="page-header__subtitle">Explore posts by lifestyle, cooking, entertainment, reviews, and more.</p>
+</header>
+
+{% if categories %}
+<div class="category-grid">
+    {% for category in categories %}
+    <a href="{% url 'blog:category_detail' category_slug=category.slug %}" class="category-card">
+        <h2 class="category-card__title">{{ category.label }}</h2>
+        <p class="category-card__count">{{ category.count }} published post{{ category.count|pluralize }}</p>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-state__icon" aria-hidden="true">🗂️</div>
+    <h3 class="empty-state__title">No categories yet</h3>
+    <p class="empty-state__text">There are no published posts yet to categorize.</p>
+    <a href="{% url 'blog:create_post' %}" class="btn btn--primary">Create a post</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,795 @@
+/* ── Admin Layout ────────────────────────────────────────────── */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background: var(--color-bg);
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+.admin-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.admin-sidebar__header {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.admin-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+    transition: color var(--transition);
+}
+
+.admin-logo:hover {
+    color: var(--color-accent);
+}
+
+.admin-logo__mark {
+    color: var(--color-accent);
+    font-size: 0.8rem;
+}
+
+.admin-logo__subtitle {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* ── Admin Navigation ────────────────────────────────────────── */
+.admin-nav {
+    flex: 1;
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.admin-nav__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--color-text-muted);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background var(--transition), color var(--transition);
+}
+
+.admin-nav__link:hover {
+    background: var(--color-accent-soft);
+    color: var(--color-text);
+}
+
+.admin-nav__link.is-active {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.admin-nav__icon {
+    font-size: 1.1rem;
+    display: inline-block;
+    width: 1.2rem;
+    text-align: center;
+}
+
+.admin-sidebar__footer {
+    padding: 1rem 0.75rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.admin-footer__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition), color var(--transition);
+}
+
+.admin-footer__link:hover {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+}
+
+/* ── Main Content Area ───────────────────────────────────────── */
+.admin-main {
+    flex: 1;
+    margin-left: 260px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ── Admin Header ────────────────────────────────────────────── */
+.admin-header {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-header__content {
+    flex: 1;
+}
+
+.admin-header__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.admin-header__user {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-user__info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-user__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.admin-user__name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.admin-user__logout {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+}
+
+.admin-user__logout:hover {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+/* ── Messages ────────────────────────────────────────────────── */
+.admin-messages {
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.admin-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    border-left: 4px solid;
+    background: var(--color-surface);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.admin-message--success {
+    border-left-color: #10b981;
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.admin-message--error {
+    border-left-color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.admin-message--warning {
+    border-left-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.05);
+}
+
+.admin-message--info {
+    border-left-color: var(--color-accent);
+    background: var(--color-accent-soft);
+}
+
+.admin-message__icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.admin-message__content {
+    flex: 1;
+    font-size: 0.95rem;
+    color: var(--color-text);
+}
+
+.admin-message__close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color var(--transition);
+}
+
+.admin-message__close:hover {
+    color: var(--color-text);
+}
+
+/* ── Admin Content ───────────────────────────────────────────── */
+.admin-content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ── Admin Tables ────────────────────────────────────────────── */
+.admin-content table,
+.changelist table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin: 1rem 0;
+}
+
+.admin-content table thead,
+.changelist table thead {
+    background: var(--color-bg);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.admin-content table thead th,
+.changelist table thead th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: 0.9rem;
+}
+
+.admin-content table tbody tr,
+.changelist table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background var(--transition);
+}
+
+.admin-content table tbody tr:hover,
+.changelist table tbody tr:hover {
+    background: var(--color-accent-soft);
+}
+
+.admin-content table tbody td,
+.changelist table tbody td {
+    padding: 1rem;
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
+
+.admin-content table a,
+.changelist table a {
+    color: var(--color-accent);
+    font-weight: 500;
+    transition: color var(--transition);
+}
+
+.admin-content table a:hover,
+.changelist table a:hover {
+    color: var(--color-accent-hover);
+}
+
+/* ── Admin Forms ─────────────────────────────────────────────── */
+.admin-content fieldset,
+.form-row,
+.form-group {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-content fieldset legend,
+.form-row h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.admin-content label,
+label.required::after {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: 0.9rem;
+}
+
+.admin-content input[type="text"],
+.admin-content input[type="email"],
+.admin-content input[type="password"],
+.admin-content input[type="number"],
+.admin-content input[type="date"],
+.admin-content textarea,
+.admin-content select {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    transition: border-color var(--transition), box-shadow var(--transition);
+    margin-bottom: 1rem;
+}
+
+.admin-content input[type="text"]:focus,
+.admin-content input[type="email"]:focus,
+.admin-content input[type="password"]:focus,
+.admin-content input[type="number"]:focus,
+.admin-content input[type="date"]:focus,
+.admin-content textarea:focus,
+.admin-content select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(196, 93, 44, 0.1);
+}
+
+.admin-content textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* ── Admin Buttons ───────────────────────────────────────────── */
+.admin-content .submit-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.admin-content input[type="submit"],
+.admin-content button {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition), transform var(--transition);
+}
+
+.admin-content input[type="submit"] {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.admin-content input[type="submit"]:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
+}
+
+.admin-content .deletelink {
+    background: #ef4444;
+    color: #fff;
+}
+
+.admin-content .deletelink:hover {
+    background: #dc2626;
+}
+
+/* ── Admin Actions ───────────────────────────────────────────── */
+.admin-content .actions {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.admin-content .actions select,
+.admin-content .actions button {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        position: fixed;
+        left: -260px;
+        transition: left var(--transition);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .admin-sidebar.is-open {
+        left: 0;
+    }
+    
+    .admin-main {
+        margin-left: 0;
+    }
+    
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .admin-header__user {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .admin-content {
+        padding: 1rem;
+    }
+    
+    .admin-content .submit-row {
+        flex-direction: column;
+    }
+    
+    .admin-content input[type="submit"],
+    .admin-content button {
+        width: 100%;
+    }
+}
+
+/* ── Django Admin Specific Overrides ────────────────────────── */
+.admin-content .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.admin-content .form-row input,
+.admin-content .form-row textarea,
+.admin-content .form-row select {
+    width: 100%;
+}
+
+.admin-content input[type="text"],
+.admin-content input[type="email"],
+.admin-content input[type="password"],
+.admin-content input[type="number"],
+.admin-content input[type="date"],
+.admin-content input[type="datetime-local"],
+.admin-content input[type="time"],
+.admin-content textarea,
+.admin-content select {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+}
+
+.admin-content textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.admin-content input:focus,
+.admin-content textarea:focus,
+.admin-content select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(196, 93, 44, 0.1);
+}
+
+.admin-content input[type="checkbox"],
+.admin-content input[type="radio"] {
+    width: auto;
+    margin-right: 0.5rem;
+}
+
+.admin-content .help-text {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+}
+
+.admin-content .errorlist {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    margin: 0 0 1rem;
+    list-style: none;
+    color: #991b1b;
+    font-size: 0.9rem;
+}
+
+.admin-content .errorlist li {
+    padding: 0.25rem 0;
+}
+
+.admin-content .errorlist li:before {
+    content: "⚠️ ";
+    margin-right: 0.3rem;
+}
+
+.admin-content .fieldBox {
+    margin-bottom: 1rem;
+}
+
+.admin-content .wide {
+    grid-column: 1 / -1;
+}
+
+.admin-content .collapse-toggle {
+    color: var(--color-accent);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-content .collapsed .fieldBox {
+    display: none;
+}
+
+.admin-content .related-widget-wrapper {
+    margin-top: 0.5rem;
+}
+
+.admin-content .remove {
+    margin-top: 0.5rem;
+}
+
+.admin-content .remove input {
+    width: auto;
+    margin-right: 0.5rem;
+}
+
+/* ── Django Inline Admin ────────────────────────────────────── */
+.admin-content .inline-group {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-content .inline-group h2 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.admin-content .inline-related {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.admin-content .inline-related h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* ── Django Admin Buttons ──────────────────────────────────── */
+.admin-content .deletelink-box {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.admin-content .deletelink-box p {
+    margin: 0;
+    color: #991b1b;
+    font-size: 0.9rem;
+}
+
+.admin-content .deletelink {
+    background: #ef4444;
+    color: #fff;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background var(--transition);
+    margin-top: 0.5rem;
+    display: inline-block;
+}
+
+.admin-content .deletelink:hover {
+    background: #dc2626;
+}
+
+/* ── Autocomplete ──────────────────────────────────────────── */
+.admin-content .ui-autocomplete {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.admin-content .ui-autocomplete .ui-menu-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.admin-content .ui-autocomplete .ui-menu-item:hover,
+.admin-content .ui-autocomplete .ui-menu-item.ui-state-focus {
+    background: var(--color-accent-soft);
+    color: var(--color-text);
+}
+
+/* ── Date Picker ───────────────────────────────────────────── */
+.admin-content .vDateTimeShortCuts {
+    margin-top: 0.5rem;
+}
+
+.admin-content .vDateTimeShortCuts a {
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    margin-right: 0.5rem;
+}
+
+.admin-content .vDateTimeShortCuts a:hover {
+    color: var(--color-accent-hover);
+}
+
+/* ── Fieldset Styling ──────────────────────────────────────── */
+.admin-content fieldset {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-content fieldset > legend {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 1.5rem -1.5rem;
+    padding: 0 1.5rem 1rem;
+    border-bottom: 2px solid var(--color-border);
+    width: calc(100% + 3rem);
+}
+
+.admin-content fieldset > h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.admin-content .submit-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.admin-content input[type="submit"] {
+    padding: 0.75rem 1.5rem;
+    background: var(--color-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background var(--transition), transform var(--transition);
+}
+
+.admin-content input[type="submit"]:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
+}
+
+.admin-content input[type="submit"][name="save"]:last-of-type {
+    order: -1;
+}

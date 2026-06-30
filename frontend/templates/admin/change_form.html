@@ -1,0 +1,280 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}
+    {% if add %}Add Post{% else %}Change Post{% endif %}
+{% endblock %}
+
+{% block header-title %}
+    {% if add %}
+        Add Post
+    {% else %}
+        Change Post: {{ original }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="admin-change-form">
+    <!-- Form Header with Actions -->
+    <div class="admin-form-actions">
+        {% if has_delete_permission %}
+        <a href="{% url 'admin:blog_post_delete' original.pk %}" class="btn btn--ghost" style="background: #fee2e2; border-color: #ef4444; color: #dc2626;">
+            Delete
+        </a>
+        {% endif %}
+        <a href="{% url 'admin:blog_post_changelist' %}" class="btn btn--ghost">
+            ← Back to list
+        </a>
+    </div>
+
+    <!-- Errors -->
+    {% if form.non_field_errors %}
+    <div class="admin-form-errors">
+        {% for error in form.non_field_errors %}
+        <div class="admin-error">
+            <span class="admin-error__icon">❌</span>
+            <span class="admin-error__message">{{ error }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Form -->
+    <form method="post" class="admin-form">
+        {% csrf_token %}
+
+        {% for fieldset in adminform %}
+        <fieldset class="admin-fieldset">
+            {% if fieldset.name %}
+            <legend class="admin-fieldset__legend">{{ fieldset.name }}</legend>
+            {% endif %}
+
+            {% for line in fieldset %}
+            <div class="admin-form-line">
+                {% for field in line %}
+                <div class="admin-form-field{% if field.field.help_text %} has-help{% endif %}">
+                    {% if field.is_readonly %}
+                    <div class="admin-form-field__readonly">
+                        <label class="admin-form-field__label">{{ field.label }}</label>
+                        <div class="admin-form-field__value">{{ field.contents }}</div>
+                    </div>
+                    {% else %}
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="admin-form-field__errors">
+                        {% for error in field.errors %}
+                        <div class="admin-form-field__error">
+                            <span class="admin-form-field__error-icon">⚠️</span>
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if field.field.help_text %}
+                    <div class="admin-form-field__help">{{ field.field.help_text|safe }}</div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </fieldset>
+        {% endfor %}
+
+        <!-- Submit Row -->
+        <div class="admin-form-submit">
+            <button type="submit" name="save" class="btn btn--primary">
+                {% if add %}Create Post{% else %}Save changes{% endif %}
+            </button>
+            {% if has_delete_permission %}
+            <a href="{% url 'admin:blog_post_delete' original.pk %}" class="btn" style="background: #fee2e2; color: #dc2626; border: 1px solid #ef4444;">
+                Delete
+            </a>
+            {% endif %}
+            <a href="{% url 'admin:blog_post_changelist' %}" class="btn btn--ghost">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.admin-change-form {
+    max-width: 900px;
+}
+
+.admin-form-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.admin-form-errors {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-error {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #fee2e2;
+    border-left: 4px solid #dc2626;
+    border-radius: var(--radius-md);
+}
+
+.admin-error__icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.admin-error__message {
+    color: #7f1d1d;
+    font-weight: 500;
+}
+
+.admin-fieldset {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-fieldset__legend {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.admin-form-line {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-form-field__label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: 0.9rem;
+}
+
+.admin-form-field input[type="text"],
+.admin-form-field input[type="email"],
+.admin-form-field input[type="password"],
+.admin-form-field input[type="number"],
+.admin-form-field input[type="date"],
+.admin-form-field input[type="checkbox"],
+.admin-form-field input[type="radio"],
+.admin-form-field textarea,
+.admin-form-field select {
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.admin-form-field input[type="text"]:focus,
+.admin-form-field input[type="email"]:focus,
+.admin-form-field input[type="password"]:focus,
+.admin-form-field input[type="number"]:focus,
+.admin-form-field input[type="date"]:focus,
+.admin-form-field textarea:focus,
+.admin-form-field select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(196, 93, 44, 0.1);
+}
+
+.admin-form-field textarea {
+    min-height: 150px;
+    resize: vertical;
+    font-family: var(--font-sans);
+}
+
+.admin-form-field input[type="checkbox"],
+.admin-form-field input[type="radio"] {
+    width: auto;
+    margin-right: 0.5rem;
+}
+
+.admin-form-field__errors {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.admin-form-field__error {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #fee2e2;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    color: #7f1d1d;
+}
+
+.admin-form-field__error-icon {
+    font-size: 0.9rem;
+}
+
+.admin-form-field__help {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+}
+
+.admin-form-field__readonly {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+}
+
+.admin-form-field__value {
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.admin-form-submit {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--color-border);
+}
+
+@media (max-width: 768px) {
+    .admin-form-line {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-form-submit {
+        flex-direction: column;
+    }
+    
+    .admin-form-submit .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

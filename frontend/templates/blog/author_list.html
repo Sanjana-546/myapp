@@ -1,0 +1,40 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Authors{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <p class="page-header__eyebrow">Authors</p>
+    <h1 class="page-header__title">Meet the contributors</h1>
+    <p class="page-header__subtitle">
+        {% if authors %}
+        {{ authors|length }} author{{ authors|length|pluralize }} with published posts.
+        {% else %}
+        No authors are available yet.
+        {% endif %}
+    </p>
+</header>
+
+{% if authors %}
+<ul class="author-list">
+    {% for author in authors %}
+    <li class="author-list__item">
+        <a href="{% url 'blog:author_detail' user_id=author.pk %}" class="author-card">
+            <span class="author-card__avatar" aria-hidden="true">{{ author.username|slice:":1"|upper }}</span>
+            <div class="author-card__content">
+                <strong class="author-card__name">{{ author.get_full_name|default:author.username }}</strong>
+                <p class="author-card__meta">{{ author.post_count }} published post{{ author.post_count|pluralize }}</p>
+            </div>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="empty-state">
+    <div class="empty-state__icon" aria-hidden="true">👥</div>
+    <h3 class="empty-state__title">No contributors yet</h3>
+    <p class="empty-state__text">Publish a post to introduce your first author.</p>
+    <a href="{% url 'blog:create_post' %}" class="btn btn--primary">Create a post</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Author sign in{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="auth-card">
+        <div class="auth-card__header">
+            <p class="auth-card__eyebrow">Author portal</p>
+            <h1 class="auth-card__title">Sign in to Inkspire</h1>
+            <p class="auth-card__subtitle">Create, edit, and track reach for your own posts.</p>
+        </div>
+
+        {% if error %}
+        <div class="form-errors">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            <div class="form-row">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" required autofocus placeholder="e.g. carol">
+            </div>
+            <div class="form-row">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required placeholder="Your password">
+            </div>
+            <button type="submit" class="btn btn--primary btn--block">Sign in</button>
+        </form>
+
+        <div class="auth-card__footer">
+            <p>Don't have an account? <a href="{% url 'blog:user_register' %}">Create one</a></p>
+            <p>Site admin? <a href="{% url 'admin:login' %}">Use the admin portal</a></p>
+            <p><a href="{% url 'blog:index' %}">← Back to Inkspire</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}
